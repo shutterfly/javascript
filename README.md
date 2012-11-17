@@ -19,11 +19,12 @@ the [npm style guide](https://npmjs.org/doc/coding-style.html)
   1. [Whitespace](#whitespace)
   1. [Comma First](#comma-first)
   1. [Semicolons](#semicolons)
-  1. [Asynchronous](#async)
+  1. [Asynchronous](#asynchronous)
   1. [Type Casting & Coercion](#type-coercion)
   1. [Naming Conventions](#naming-conventions)
   1. [Accessors](#accessors)
   1. [Constructors](#constructors)
+  1. [Errors](#errors)
   1. [Modules](#modules)
   1. [jQuery](#jquery)
   1. [ES5 Compatability](#es5)
@@ -846,7 +847,7 @@ the [npm style guide](https://npmjs.org/doc/coding-style.html)
     **[[⬆]](#TOC)**
 
 
-## <a name='async'>Asynchronous</a>
+## <a name='asynchronous'>Asynchronous</a>
 
     - The callback should always be the last argument in the list. Its first argument is the Error or null.
     - Send the error message back as the first argument to the callback.
@@ -1165,6 +1166,14 @@ the [npm style guide](https://npmjs.org/doc/coding-style.html)
     ```
 
     **[[⬆]](#TOC)**
+
+
+## <a name='errors'>Errors</a>
+
+  - Never throw in an asynchronous method.
+  - always create a new Error object as it provides a call stack for debugging
+
+  **[[⬆]](#TOC)**
 
 
 ## <a name='modules'>Modules</a>

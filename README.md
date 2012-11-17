@@ -1,7 +1,7 @@
-# Airbnb JavaScript Style Guide() {
+# Shutterfly JavaScript Style Guide() {
 
-*A mostly reasonable approach to JavaScript*
-
+This guide is based on [airbnb Guide](https://github.com/airbnb/javascript) with adaptations from
+the [npm style guide](https://npmjs.org/doc/coding-style.html)
 
 ## <a name='TOC'>Table of Contents</a>
 
@@ -17,8 +17,9 @@
   1. [Blocks](#blocks)
   1. [Comments](#comments)
   1. [Whitespace](#whitespace)
-  1. [Leading Commas](#leading-commas)
+  1. [Comma First](#comma-first)
   1. [Semicolons](#semicolons)
+  1. [Asynchronous](#async)
   1. [Type Casting & Coercion](#type-coercion)
   1. [Naming Conventions](#naming-conventions)
   1. [Accessors](#accessors)
@@ -29,6 +30,7 @@
   1. [Testing](#testing)
   1. [Performance](#performance)
   1. [Resources](#resources)
+  1. [Alternatives](#alternatives)
   1. [The JavaScript Style Guide Guide](#guide-guide)
   1. [Contributors](#contributors)
   1. [License](#license)
@@ -85,16 +87,16 @@
     ```javascript
     // bad
     var superman = {
-      class: 'superhero',
-      default: { clark: kent },
-      private: true
+        class: 'superhero',
+        default: { clark: kent },
+        private: true
     };
 
     // good
     var superman = {
-      klass: 'superhero',
-      defaults: { clark: kent },
-      hidden: true
+        klass: 'superhero',
+        defaults: { clark: kent },
+        hidden: true
     };
     ```
     **[[⬆]](#TOC)**
@@ -120,12 +122,12 @@
 
     // bad
     for (i = 0; i < len; i++) {
-      itemsCopy.push(items[i])
+        itemsCopy.push(items[i])
     }
 
     // good
     for (i = 0; i < len; i++) {
-      itemsCopy[i] = items[i];
+        itemsCopy[i] = items[i];
     }
     ```
 
@@ -222,14 +224,10 @@
 
 ## <a name='functions'>Functions</a>
 
+  - Use named functions. They make stack traces a lot easier to read and they avoid problems with [hoisting](#hoisting)
   - Function expressions:
 
-    ```javascript
-    // anonymous function expression
-    var anonymous = function() {
-      return true;
-    };
-
+   ```javascript
     // named function expression
     var named = function named() {
       return true;
@@ -239,7 +237,12 @@
     (function() {
       console.log('Welcome to the Internet. Please follow me.');
     })();
-    ```
+
+    // **avoid** anonymous function expression
+    var anonymous = function() {
+      return true;
+    };
+   ```
 
   - Never declare a function in a non-function block (if, while, etc). Assign the function to a variable instead. Browsers will allow you to do it, but they all interpret it differently, which is bad news bears.
 
@@ -657,12 +660,12 @@
 
 ## <a name='whitespace'>Whitespace</a>
 
-  - Use soft tabs set to 2 spaces
+  - Use soft tabs set to 4 spaces
 
     ```javascript
     // bad
     function() {
-    ∙∙∙∙var name;
+    ∙∙var name;
     }
 
     // bad
@@ -672,7 +675,7 @@
 
     // good
     function() {
-    ∙∙var name;
+    ∙∙∙∙var name;
     }
     ```
   - Place 1 space before the leading brace.
@@ -700,13 +703,24 @@
       breed: 'Bernese Mountain Dog'
     });
     ```
-  - Place an empty newline at the end of the file.
+  - Do not place a space after a control statement
+    ```javascript
+   // bad
+   if (bad) mojo ()
+
+   // good
+   if(good) luck()
+    ```
+  - Do not have more than 1 blank line at the end of a file
 
     ```javascript
     // bad
     (function(global) {
       // ...stuff...
     })(this);
+
+
+
     ```
 
     ```javascript
@@ -716,8 +730,6 @@
     })(this);
 
     ```
-
-    **[[⬆]](#TOC)**
 
   - Use indentation when making long method chains.
 
@@ -750,63 +762,111 @@
       .call(tron.led);
   ```
 
-## <a name='leading-commas'>Leading Commas</a>
+    **[[⬆]](#TOC)**
 
-  - **Nope.**
+
+## <a name='comma-first'>Comma First</a>
+
+  **Yes.**
+
+  - If there is a list of things separated by commas, and it wraps across multiple lines, put the comma at the start of
+  the next line, directly below the token that starts the list. Put the final token in the list on a line by itself.
 
     ```javascript
     // bad
-    var once
-      , upon
-      , aTime;
-
-    // good
     var once,
         upon,
         aTime;
 
-    // bad
-    var hero = {
-        firstName: 'Bob'
-      , lastName: 'Parr'
-      , heroName: 'Mr. Incredible'
-      , superPower: 'strength'
-    };
-
     // good
+    var once
+      , upon
+      , aTime
+
+    // bad
     var hero = {
       firstName: 'Bob',
       lastName: 'Parr',
       heroName: 'Mr. Incredible',
       superPower: 'strength'
     };
+
+    // good
+    var magicWords = [ "abracadabra"
+                     , "gesundheit"
+                     , "ventrilo"
+                     ]
+      , spells = { "fireball" : function () { setOnFire() }
+                 , "water" : function () { putOut() }
+                 }
+      , a = 1
+      , b = "abc"
+      , etc
+      , somethingElse
     ```
+
+     results in:
+     - easier to identify missing separaters (esp. in code reviews)
 
     **[[⬆]](#TOC)**
 
 
 ## <a name='semicolons'>Semicolons</a>
 
-  - **Yup.**
+  **Don't use them except in four situations:**
+
+  - for (;;) loops. They're actually required.
+  - null loops like: while (something) ; (But you'd better have a good reason for doing that.)
+  - case "foo": doSomething(); break
+  - In front of a leading ( or [ at the start of the line. This prevents the expression from being interpreted as a function call or property access, respectively.
 
     ```javascript
     // bad
     (function() {
-      var name = 'Skywalker'
-      return name
+      var name = 'Skywalker';
+      return name;
+    })();
+
+    // good
+    ;(x || y).doSomething()
+    ;[a, b, c].forEach(doSomething)
+    for (var i = 0; i < 10; i ++) {
+      switch (state) {
+        case "begin": start(); continue
+        case "end": finish(); break
+        default: throw new Error("unknown state")
+      }
+      end()
+    }
+    ;(function(window) {
+        // do something
     })()
+    ```
+
+    **[[⬆]](#TOC)**
+
+
+## <a name='async'>Asynchronous</a>
+
+    - The callback should always be the last argument in the list. Its first argument is the Error or null.
+    - Send the error message back as the first argument to the callback.
+
+    ```javascript
+    // bad
+    function async(data, callback) {
+        var result = doStuff()
+        if(isError(result))
+            throw new Error('I kill state and failed to inform')
+    }
 
     // good
-    (function() {
-      var name = 'Skywalker';
-      return name;
-    })();
-
-    // good
-    ;(function() {
-      var name = 'Skywalker';
-      return name;
-    })();
+    function async(data, callback) {
+        var result = doStuff()
+        if(isError(result))
+            callback(result)
+        else
+            callback(null, result)
+    }
     ```
 
     **[[⬆]](#TOC)**
@@ -885,20 +945,18 @@
 
 
 ## <a name='naming-conventions'>Naming Conventions</a>
+  - In general avoid single letter names.  Be descriptive.
+  ```javascript
+      // bad
+      function q() {
+        // ...stuff...
+      }
 
-  - Avoid single letter names. Be descriptive with your naming.
-
-    ```javascript
-    // bad
-    function q() {
-      // ...stuff...
-    }
-
-    // good
-    function query() {
-      // ..stuff..
-    }
-    ```
+      // good
+      function query() {
+        // ..stuff..
+      }
+      ```
 
   - Use camelCase when naming objects, functions, and instances
 
@@ -1213,7 +1271,11 @@
 
 ## <a name='testing'>Testing</a>
 
-  - **Yup.**
+  - **Yes.**
+
+  A separate describe (object literal in the case of nodeunit) is used for each functional unit tested.  This keeps
+  beforeEach and afterEach relevant to the unit under test and helps to group tests.
+
 
     ```javascript
     function() {
@@ -1233,6 +1295,93 @@
   - Loading...
 
   **[[⬆]](#TOC)**
+
+
+## <a name='alternatives'>Alternatives</a>
+  This section highlights considerations when choosing an alternative style
+
+  - **comma-first**
+    If your team chooses to not use comma-first then use of jslint and jshint is necessary to identify syntax errors as
+    well as placing "use strict"; at the top of the functional scope to avoid global variable declarations.
+    Before avoiding comma-first, consider [is there something to the
+    crazy comma-first style](http://ajaxian.com/archives/is-there-something-to-the-crazy-comma-first-style)
+
+    ``` javascript
+    // ok
+    var o = {
+        a : "ape",
+        b : "bat",
+        c : "cat",
+        d : "dog",
+        e : "elf",
+        f : "fly",
+        g : "gnu",
+        h : "hat",
+        i : "ibu"
+      },
+      a = [
+        [ "ape", "bat" ],
+        [ "cat", "dog" ],
+        [ "elf", "fly" ],
+        [ "gnu", "hat" ],
+        [ "ibu" ]
+      ];
+
+      // preferable
+      var o =
+          { a : "ape"
+          , b : "bat"
+          , c : "cat"
+          , d : "dog"
+          , e : "elf"
+          , f : "fly"
+          , g : "gnu"
+          , h : "hat"
+          , i : "ibu"
+          }
+        , a = [ ["ape", "bat"]
+              , ["cat", "dog"]
+              , ["elf", "fly"]
+              , ["gnu", "hat"]
+              , ["ibu"]
+              ]
+    ```
+
+  - **semi-colons**
+    If your team does not want to rely on automatic semi-colon insertion (ASI) then it is necessary to use jslint and
+    jshint to identify syntax errors and terminate function declarations with semi-colons
+
+    ```javascript
+    // bad
+    function() {
+        console.log(arguments.length);  // 1
+    }
+
+    (function() {
+        console.log('I am an argument');
+    })();
+
+    // ok
+    function() {
+        console.log(argument.length); // 0
+    };
+
+    (function() {
+        console.log('I am not an argument');
+    })();
+
+    // preferable
+    function() {
+        console.log(argument.length) // 0
+    }
+
+    ;(function() {
+        console.log('I am not an argument');
+    })()
+    ```
+
+    In most cases it's easier to remember (and identify) when a semi-colon is missing in front of a ( or [ at the
+    beginning of a line.
 
 
 ## <a name='resources'>Resources</a>
